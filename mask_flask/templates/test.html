@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block content %}
+    <section class="py-3 text-center container">
+        <div class="row py-lg-5">
+            <div class="col-lg-6 col-md-8 mx-auto">
+                <img src='https://cdn-icons-png.flaticon.com/512/1829/1829801.png'>
+                {% if error %}
+                <div class="alert alert-danger" role="alert">
+                    <h1 class="jh fw-light">{{error}}</h1>
+                </div>
+                {% endif %}
+                
+                {% if result %}
+                    {% if result[0] == 1 %}
+                    <div class="alert alert-success" role="alert">
+                        <h1 class="jh fw-light">마스크를 쓰고 있네요!</h1>
+                    </div>  
+                    {% else %}
+                    <div class="alert alert-warning" role="alert">
+                        <h1 class="jh fw-light">마스크를 안 쓰고 있는것 같아요ㅠ</h1>
+                    </div>
+                    {% endif %}
+                {% endif %}
+                {% if not result and not error %}
+                <div class="alert alert-info" role="alert">
+                    <h1 class="jh fw-light">분석할 사진을 넣어주세요!</h1> 
+                </div>
+                {% endif %}
+                {% if not result %}
+                <form method=post enctype=multipart/form-data>
+                    <input type=file name=file>
+                    <input type=submit value=Upload>
+                </form>
+                {% else %}
+                <a href="/test"><button type="button" class="btn btn-secondary">다시하기</button></a>
+                {% endif %}
+            </div>
+        </div>
+    </section>
+{% endblock %}
