@@ -51,8 +51,9 @@ def index():
             return render_template('test.html', error=error),200
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
-            file.save(os.path.join(current_app.config['UPLOAD_FOLDER'], filename))
-            result = predict(os.path.join(current_app.config['UPLOAD_FOLDER'], filename), current_app.config['MODEL'])
+            #file.save(os.path.join(current_app.config['UPLOAD_FOLDER'], filename))
+            #result = predict(os.path.join(current_app.config['UPLOAD_FOLDER'], filename), current_app.config['MODEL'])
+            result = predict(file, current_app.config['MODEL'])
             print(result)
             if result[0]:
                 return render_template('test.html', result=result),200
