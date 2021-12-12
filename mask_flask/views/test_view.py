@@ -6,6 +6,8 @@ from skimage.transform import resize
 from skimage.io import imread
 import pandas as pd
 import numpy as np
+from pymongo import MongoClient
+import datetime
 
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
 test_bp = Blueprint('test', __name__)
@@ -21,7 +23,25 @@ def predict(filepath, model):
     flat_img = np.array(flat_img_arr)
     df = pd.DataFrame(flat_img)
     return model.predict(df)
+def feedback_to_mongo(predict):
+    HOST = 'cluster0.n76ap.mongodb.net'
+    USER = 'admin'
+    PASSWORD = 'admin1234'
+    DATABASE_NAME = 'myFirstDatabase'
+    COLLECTION_NAME = 'usage'
+    MONGO_URI = f"mongodb+srv://{USER}:{PASSWORD}@{HOST}/{DATABASE_NAME}?retryWrites=true&w=majority"
 
+    client = MongoClient(MONGO_URI)
+    db = client[DATABASE_NAME]
+
+    feedback={}
+        
+    feedback['predict'] = int(predict)
+    feedback['use_date'] = str(datetime.datetime.utcnow().date())
+    feedback['use_time'] = datetime.datetime.utcnow()
+    
+    db[COLLECTION_NAME].insert_one(feedback)
+    print('record model usage on mongoDB successfully')
 @test_bp.route('/test', methods=['GET','POST'])
 def index():
     """
@@ -54,7 +74,7 @@ def index():
             #file.save(os.path.join(current_app.config['UPLOAD_FOLDER'], filename))
             #result = predict(os.path.join(current_app.config['UPLOAD_FOLDER'], filename), current_app.config['MODEL'])
             result = predict(file, current_app.config['MODEL'])
-            print(result)
+            feedback_to_mongo(result[0])
             if result[0]:
                 return render_template('test.html', result=result),200
             else:
