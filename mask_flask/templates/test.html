@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% block testactive %}active{% endblock %}
 {% block content %}
     <section class="py-3 text-center container">
         <div class="row py-lg-5">
@@ -6,24 +7,24 @@
                 <img src='https://cdn-icons-png.flaticon.com/512/1829/1829801.png'>
                 {% if error %}
                 <div class="alert alert-danger" role="alert">
-                    <h1 class="jh fw-light">{{error}}</h1>
+                    <h2 class="jh fw-light">{{error}}</h1>
                 </div>
                 {% endif %}
                 
                 {% if result %}
                     {% if result[0] == 1 %}
                     <div class="alert alert-success" role="alert">
-                        <h1 class="jh fw-light">마스크를 쓰고 있네요!</h1>
+                        <h2 class="jh fw-light">마스크를 쓰고 있네요!</h1>
                     </div>  
                     {% else %}
                     <div class="alert alert-warning" role="alert">
-                        <h1 class="jh fw-light">마스크를 안 쓰고 있는것 같아요ㅠ</h1>
+                        <h2 class="jh fw-light">마스크를 안 쓰고 있는것 같아요ㅠ</h1>
                     </div>
                     {% endif %}
                 {% endif %}
                 {% if not result and not error %}
                 <div class="alert alert-info" role="alert">
-                    <h1 class="jh fw-light">분석할 사진을 넣어주세요!</h1> 
+                    <h2 class="jh fw-light">분석할 사진을 넣어주세요!</h1> 
                 </div>
                 {% endif %}
                 {% if not result %}
@@ -32,7 +33,10 @@
                     <input type=submit value=Upload>
                 </form>
                 {% else %}
-                <a href="/test"><button type="button" class="btn btn-secondary">다시하기</button></a>
+                <a href="/feedback"><button type="button" class="btn btn-info btn-lg">피드백 하러가기</button></a>
+                <br>
+                <br>
+                <a href="/test"><button type="button" class="btn btn-link btn-sm">&#11152;돌아가기</button></a>
                 {% endif %}
             </div>
         </div>

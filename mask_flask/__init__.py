@@ -12,9 +12,11 @@ with open('mask_flask/model.pkl','rb') as pickle_file:
     
 from mask_flask.views.main_view import main_bp
 from mask_flask.views.test_view import test_bp
+from mask_flask.views.feedback_view import feedback_bp
 
 app.register_blueprint(main_bp)
 app.register_blueprint(test_bp)
+app.register_blueprint(feedback_bp)
 
 if __name__ == "__main__":
     app.run(debug=True)
