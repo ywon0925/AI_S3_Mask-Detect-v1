@@ -46,7 +46,6 @@ protobuf==3.19.1
 pyasn1==0.4.8
 pyasn1-modules==0.2.8
 pycparser==2.21
-pyheif @ git+https://github.com/carsales/pyheif.git@7941db4952284e11496e552d75bde7e7779548cd
 pymongo==4.0.1
 pyOpenSSL==21.0.0
 pyparsing==3.0.6
@@ -76,7 +75,6 @@ trio==0.19.0
 trio-websocket==0.9.2
 typing_extensions==4.0.1
 urllib3==1.26.7
-Wand==0.6.7
 webdriver-manager==3.5.2
 Werkzeug==2.0.2
 wrapt==1.13.3
