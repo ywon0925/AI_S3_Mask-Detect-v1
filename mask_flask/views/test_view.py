@@ -11,6 +11,8 @@ import datetime
 import pyheif
 from PIL import Image
 import io
+import cv2
+
 
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
 test_bp = Blueprint('test', __name__)
@@ -29,13 +31,13 @@ def convert_to_jpg(file):
     
     return path
 def predict(file, model):
-    flat_img_arr = []
-    img_array = imread(file)
-    img_resized = resize(img_array,(150,150,3))
-    flat_img_arr.append(img_resized.flatten())
-    flat_img = np.array(flat_img_arr)
-    df = pd.DataFrame(flat_img)
-    return model.predict(df)
+    X_test = []
+    img_array = cv2.imread(file)[...,::-1]
+    img_resized = cv2.resize(img_array,(224,224))
+    X_test.append(img_resized)
+    X_test = np.array(X_test)/255
+    X_test.reshape(-1, 224, 224, 1)
+    return model.predict(X_test)
 
 def usage_count_to_mongo(predict):
     HOST = 'cluster0.n76ap.mongodb.net'
@@ -73,8 +75,8 @@ def index():
       - `GET` 요청이 들어오면 `templates/index.html` 파일을 렌더해야 합니다.
 
     """
+    result = None
     if request.method == 'POST':
-        result = []
         error = ''
         if 'file' not in request.files:
             error = '파일이 없어요!'
@@ -92,20 +94,20 @@ def index():
               #  print(path)
               #  result = predict(path, current_app.config['MODEL'])
                 #usage_count_to_mongo(result[0])
-            #filename = secure_filename(file.filename)
-            #file.save(os.path.join(current_app.config['UPLOAD_FOLDER'], filename))
-            #result = predict(os.path.join(current_app.config['UPLOAD_FOLDER'], filename), current_app.config['MODEL'])
-            #else:
-            result = predict(file, current_app.config['MODEL'])
-            usage_count_to_mongo(result[0])
-            if result != []:
-                return render_template('test.html', result=result),200
+            filename = secure_filename(file.filename)
+            file.save(os.path.join(current_app.config['UPLOAD_FOLDER'], filename))
+            result = predict(os.path.join(current_app.config['UPLOAD_FOLDER'], filename), current_app.config['MODEL'])
+            if result[0][1] > 0.5:
+                result = 1
             else:
-                print(result)
-                return redirect(request.url)
+                result = 0
+            usage_count_to_mongo(result)
+                
+            os.remove(os.path.join(current_app.config['UPLOAD_FOLDER'], filename))
+            return render_template('test.html', result=result),200
         else:
             error = '잘못된 형식의 파일이에요!'
             return render_template('test.html', error=error),200
             
             
-    return render_template('test.html'), 200
+    return render_template('test.html', result=result), 200

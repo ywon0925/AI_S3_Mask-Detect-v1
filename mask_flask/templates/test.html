@@ -10,24 +10,21 @@
                     <h2 class="jh fw-light">{{error}}</h1>
                 </div>
                 {% endif %}
-                
-                {% if result %}
-                    {% if result[0] == 1 %}
+                    {% if result == 1 %}
                     <div class="alert alert-success" role="alert">
                         <h2 class="jh fw-light">마스크를 쓰고 있네요!</h1>
                     </div>  
-                    {% else %}
+                    {% elif result == 0 %}
                     <div class="alert alert-warning" role="alert">
-                        <h2 class="jh fw-light">마스크를 안 쓰고 있는것 같아요ㅠ</h1>
+                        <h2 class="jh fw-light">마스크를 안 쓰고 있는것 같아요ㅠㅠ</h1>
                     </div>
                     {% endif %}
-                {% endif %}
-                {% if not result and not error %}
+                {% if result != 0 and result != 1 and not error %}
                 <div class="alert alert-info" role="alert">
                     <h2 class="jh fw-light">분석할 사진을 넣어주세요!</h1> 
                 </div>
                 {% endif %}
-                {% if not result %}
+                {% if result != 0 and result != 1 %}
                 <form method=post enctype=multipart/form-data>
                     <input type=file name=file>
                     <input type=submit value=Upload>

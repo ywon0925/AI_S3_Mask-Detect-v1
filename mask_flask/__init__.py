@@ -1,13 +1,15 @@
 from flask import Flask
 import pickle
 import sklearn
+import tensorflow as tf
+from tensorflow import keras
 
 UPLOAD_FOLDER = 'mask_flask/img_upload'
 
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['MODEL'] = None
-with open('mask_flask/model.pkl','rb') as pickle_file:
+with open('mask_flask/tf_learning_model.pkl','rb') as pickle_file:
     app.config['MODEL'] = pickle.load(pickle_file)
     
 from mask_flask.views.main_view import main_bp
