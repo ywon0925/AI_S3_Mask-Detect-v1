@@ -90,16 +90,17 @@ def index():
               #  print(path)
               #  result = predict(path, current_app.config['MODEL'])
                 #usage_count_to_mongo(result[0])
-            filename = secure_filename(file.filename)
-            file.save(os.path.join(current_app.config['UPLOAD_FOLDER'], filename))
-            result = predict(os.path.join(current_app.config['UPLOAD_FOLDER'], filename), current_app.config['MODEL'])
+            #filename = secure_filename(file.filename)
+            #file.save(os.path.join(current_app.config['UPLOAD_FOLDER'], filename))
+            print(dir(file))
+            result = predict(file.read(), current_app.config['MODEL'])
             if result[0][1] > 0.5:
                 result = 1
             else:
                 result = 0
             usage_count_to_mongo(result)
                 
-            os.remove(os.path.join(current_app.config['UPLOAD_FOLDER'], filename))
+            #os.remove(os.path.join(current_app.config['UPLOAD_FOLDER'], filename))
             return render_template('test.html', result=result),200
         else:
             error = '잘못된 형식의 파일이에요!'
