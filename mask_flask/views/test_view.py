@@ -8,22 +8,36 @@ import pandas as pd
 import numpy as np
 from pymongo import MongoClient
 import datetime
+import pyheif
+from PIL import Image
+import io
 
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
 test_bp = Blueprint('test', __name__)
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
-
-def predict(filepath, model):
+def convert_to_jpg(file):
+    fname = file.filename
+    i = pyheif.read(file)
+    # Convert to other file format like jpeg
+    s = io.BytesIO()
+    pi = Image.frombytes(mode=i.mode, size=i.size, data=i.data)
+    pi.save(s, format="jpeg")
+    path = os.path.join(current_app.config['UPLOAD_FOLDER'], fname.replace('heic','jpg'))
+    pi.save(path)
+    
+    return path
+def predict(file, model):
     flat_img_arr = []
-    img_array = imread(filepath)
+    img_array = imread(file)
     img_resized = resize(img_array,(150,150,3))
     flat_img_arr.append(img_resized.flatten())
     flat_img = np.array(flat_img_arr)
     df = pd.DataFrame(flat_img)
     return model.predict(df)
-def feedback_to_mongo(predict):
+
+def usage_count_to_mongo(predict):
     HOST = 'cluster0.n76ap.mongodb.net'
     USER = 'admin'
     PASSWORD = 'admin1234'
@@ -60,24 +74,34 @@ def index():
 
     """
     if request.method == 'POST':
+        result = []
         error = ''
         if 'file' not in request.files:
             error = '파일이 없어요!'
             return render_template('test.html', error=error),200
         file = request.files['file']
-        
+        print(type(file))
+
         if file.filename == '':
             error = '사진을 넣어주세요!'
             return render_template('test.html', error=error),200
+            
         if file and allowed_file(file.filename):
-            filename = secure_filename(file.filename)
+            #if 'heic' in file.filename:
+             #   path = convert_to_jpg(file)
+              #  print(path)
+              #  result = predict(path, current_app.config['MODEL'])
+                #usage_count_to_mongo(result[0])
+            #filename = secure_filename(file.filename)
             #file.save(os.path.join(current_app.config['UPLOAD_FOLDER'], filename))
             #result = predict(os.path.join(current_app.config['UPLOAD_FOLDER'], filename), current_app.config['MODEL'])
+            #else:
             result = predict(file, current_app.config['MODEL'])
-            feedback_to_mongo(result[0])
-            if result[0]:
+            usage_count_to_mongo(result[0])
+            if result != []:
                 return render_template('test.html', result=result),200
             else:
+                print(result)
                 return redirect(request.url)
         else:
             error = '잘못된 형식의 파일이에요!'
