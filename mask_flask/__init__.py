@@ -1,8 +1,13 @@
 from flask import Flask
 import pickle
 from tensorflow import keras
+import os
 
-UPLOAD_FOLDER = 'mask_flask/img_upload'
+path = os.path.join(os.getcwd(),'mask_flask/img_upload')
+if not os.path.exists(path):
+    os.makedirs(path)
+
+UPLOAD_FOLDER = path
 
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
