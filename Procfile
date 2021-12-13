@@ -1,2 +1,2 @@
-web: gunicorn --workers=2 mask_flask:app --timeout 300
+web: gunicorn --workers=1 mask_flask:app --timeout 300
 
