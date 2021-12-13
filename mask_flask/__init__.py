@@ -1,6 +1,5 @@
 from flask import Flask
 import pickle
-import sklearn
 from tensorflow import keras
 
 UPLOAD_FOLDER = 'mask_flask/img_upload'

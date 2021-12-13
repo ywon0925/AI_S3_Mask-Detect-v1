@@ -2,13 +2,9 @@ import csv
 from flask import Blueprint, render_template, request, redirect, url_for, flash, current_app
 from werkzeug.utils import secure_filename
 import os
-from skimage.transform import resize
-from skimage.io import imread
-import pandas as pd
 import numpy as np
 from pymongo import MongoClient
 import datetime
-import pyheif
 from PIL import Image
 import io
 import cv2
