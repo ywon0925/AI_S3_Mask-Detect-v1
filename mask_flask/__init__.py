@@ -18,5 +18,6 @@ app.register_blueprint(main_bp)
 app.register_blueprint(test_bp)
 app.register_blueprint(feedback_bp)
 
+
 if __name__ == "__main__":
     app.run(debug=True)
