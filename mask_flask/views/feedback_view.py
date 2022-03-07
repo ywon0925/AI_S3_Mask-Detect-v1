@@ -5,7 +5,7 @@ from pymongo import MongoClient
 def feedback_to_mongo(target, predict):
     HOST = 'cluster0.n76ap.mongodb.net'
     USER = 'admin'
-    PASSWORD = 'admin1234'
+    PASSWORD = ''
     DATABASE_NAME = 'myFirstDatabase'
     COLLECTION_NAME = 'feedback'
     MONGO_URI = f"mongodb+srv://{USER}:{PASSWORD}@{HOST}/{DATABASE_NAME}?retryWrites=true&w=majority"

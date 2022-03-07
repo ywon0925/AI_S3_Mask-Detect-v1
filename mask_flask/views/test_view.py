@@ -38,7 +38,7 @@ def predict(file, model):
 def usage_count_to_mongo(predict):
     HOST = 'cluster0.n76ap.mongodb.net'
     USER = 'admin'
-    PASSWORD = 'admin1234'
+    PASSWORD = ''
     DATABASE_NAME = 'myFirstDatabase'
     COLLECTION_NAME = 'usage'
     MONGO_URI = f"mongodb+srv://{USER}:{PASSWORD}@{HOST}/{DATABASE_NAME}?retryWrites=true&w=majority"
@@ -56,24 +56,10 @@ def usage_count_to_mongo(predict):
     print('record model usage on mongoDB successfully')
 @test_bp.route('/test', methods=['GET','POST'])
 def index():
-    """
-    index 함수에서는 '/' 엔드포인트로 접속했을 때 'index.html' 파일을
-    렌더링 해줍니다.
-
-    'index.html' 파일에서 'users.csv' 파일에 저장된 유저 목록을 보여줄 수 있도록
-    유저들을 html 파일에 넘길 수 있어야 합니다.
-
-    요구사항:
-      - HTTP Method: `GET`
-      - Endpoint: `/`
-
-    상황별 요구사항:
-      - `GET` 요청이 들어오면 `templates/index.html` 파일을 렌더해야 합니다.
-
-    """
     result = None
     if request.method == 'POST':
         error = ''
+        # check if file exist
         if 'file' not in request.files:
             error = '파일이 없어요!'
             return render_template('test.html', error=error),200
@@ -83,13 +69,10 @@ def index():
         if file.filename == '':
             error = '사진을 넣어주세요!'
             return render_template('test.html', error=error),200
-            
+        
+        # if file is allowed type (ex jpg, png ...)
+        # predict with image 
         if file and allowed_file(file.filename):
-            #if 'heic' in file.filename:
-             #   path = convert_to_jpg(file)
-              #  print(path)
-              #  result = predict(path, current_app.config['MODEL'])
-                #usage_count_to_mongo(result[0])
             filename = secure_filename(file.filename)
             file_path = os.path.join(current_app.config['UPLOAD_FOLDER'], filename)
             file.save(file_path)
